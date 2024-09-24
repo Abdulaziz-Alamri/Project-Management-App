@@ -13,113 +13,116 @@ class AllProjectsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      
       create: (context) =>
           AllProjectsBloc(ApiNetworking())..add(FetchAllProjectsEvent()),
       child: Builder(builder: (context) {
-        
         return Scaffold(
-          body: CustomScrollView(
-            slivers: [
-              SliverAppBar(
-                backgroundColor: const Color(0x80e9e9e9),
-                expandedHeight: 100.0,
-                floating: true,
-                pinned: false,
-                flexibleSpace: FlexibleSpaceBar(
-                  title: const Text(
-                    'All Projects',
-                    style: TextStyle(color: AppColors.white),
-                  ),
-                  background: Container(color: AppColors.blueDark),
-                ),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.add, color: Colors.white),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const AddProjectScreen(),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.all(15.0),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.5),
-                          spreadRadius: 1,
-                          blurRadius: 3,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
+          body: RefreshIndicator(
+            onRefresh: () async {
+              // إعادة تحميل المشاريع عند السحب لتحديث
+              context.read<AllProjectsBloc>().add(FetchAllProjectsEvent());
+            },
+            child: CustomScrollView(
+              slivers: [
+                SliverAppBar(
+                  backgroundColor: const Color(0x80e9e9e9),
+                  expandedHeight: 100.0,
+                  floating: true,
+                  pinned: false,
+                  flexibleSpace: FlexibleSpaceBar(
+                    title: const Text(
+                      'All Projects',
+                      style: TextStyle(color: AppColors.white),
                     ),
-                    child: TextField(
-                      decoration: InputDecoration(
-                        hintText: 'Search...',
-                        prefixIcon: const Icon(Icons.search),
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.sp),
-                          borderSide: BorderSide.none,
+                    background: Container(color: AppColors.blueDark),
+                  ),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.add, color: Colors.white),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const AddProjectScreen(),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+                SliverToBoxAdapter(
+                  child: Padding(
+                    padding: const EdgeInsets.all(15.0),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.grey.withOpacity(0.5),
+                            spreadRadius: 1,
+                            blurRadius: 3,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: TextField(
+                        decoration: InputDecoration(
+                          hintText: 'Search...',
+                          prefixIcon: const Icon(Icons.search),
+                          filled: true,
+                          fillColor: Colors.white,
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.sp),
+                            borderSide: BorderSide.none,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              BlocBuilder<AllProjectsBloc, AllProjectsState>(
-                builder: (context, state) {
-                  if (state is AllProjectsLoading) {
-                    return const SliverToBoxAdapter(
-                      child: Center(child: CircularProgressIndicator()),
-                    );
-                  } else if (state is AllProjectsError) {
-                    return SliverToBoxAdapter(
-                      child: Center(child: Text('Error: ${state.message}')),
-                    );
-                  } else if (state is AllProjectsLoaded) {
-                    if (state.projects.isEmpty) {
+                BlocBuilder<AllProjectsBloc, AllProjectsState>(
+                  builder: (context, state) {
+                    if (state is AllProjectsLoading) {
                       return const SliverToBoxAdapter(
-                        child: Center(child: Text('No projects available.')),
+                        child: Center(child: CircularProgressIndicator()),
+                      );
+                    } else if (state is AllProjectsError) {
+                      return SliverToBoxAdapter(
+                        child: Center(child: Text('Error: ${state.message}')),
+                      );
+                    } else if (state is AllProjectsLoaded) {
+                      if (state.projects.isEmpty) {
+                        return const SliverToBoxAdapter(
+                          child: Center(child: Text('No projects available.')),
+                        );
+                      }
+                      return SliverList(
+                        delegate: SliverChildBuilderDelegate(
+                          (context, index) {
+                            final project = state.projects[index];
+                            return Projects(project: project);
+                          },
+                          childCount: state.projects.length,
+                        ),
                       );
                     }
-                    return SliverList(
-                      delegate: SliverChildBuilderDelegate(
-                        (context, index) {
-                          final project = state.projects[index];
-                          return Projects(project: project);
-                        },
-                        childCount: state.projects.length,
-                      ),
+                    return const SliverToBoxAdapter(
+                      child: Center(child: Text('No data')),
                     );
-                  }
-                  return const SliverToBoxAdapter(
-                    child: Center(child: Text('No data')),
-                  );
-                },
-              ),
-              // Add a SliverToBoxAdapter with a SizedBox at the bottom
-              SliverToBoxAdapter(
-                child: SizedBox(
-                  height: 14.h, // Adjust height as needed
-                  child: Center(
-                    child: Text(
-                      'End of Projects',
-                      style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                  },
+                ),
+                SliverToBoxAdapter(
+                  child: SizedBox(
+                    height: 14.h, // Adjust height as needed
+                    child: Center(
+                      child: Text(
+                        'End of Projects',
+                        style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       }),

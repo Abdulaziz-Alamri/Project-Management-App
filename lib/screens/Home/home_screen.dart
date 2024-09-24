@@ -23,7 +23,7 @@ class HomeScreen extends StatelessWidget {
           providers: [
             BlocProvider(
               create: (context) => HomeBloc(apiNetworking: ApiNetworking())
-                ..add(FetchProjects()),
+                ..add(FetchProjects()), // أول Fetch
             ),
             BlocProvider(
               create: (context) => ImageSliderCubit(3),
@@ -35,71 +35,79 @@ class HomeScreen extends StatelessWidget {
                 length: 3, // Number of tabs
                 child: Scaffold(
                   backgroundColor: const Color(0x80e9e9e9),
-                  body: CustomScrollView(
-                    slivers: [
-                      SliverAppBar(
-                        backgroundColor: const Color(0xff352197),
-                        floating: true,
-                        pinned: false,
-                        actions: [
-                          const Text(
-                            'Home',
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                                fontSize: 24,
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                          ),
-                          const SizedBox(
-                            width: 180,
-                          ),
-                          Image.asset(
-                            'assets/logo-h-white 2.png',
-                            height: 20.h,
-                            width: 28.w,
-                          ),
-                        ],
-                      ),
-                      SliverList(
-                        delegate: SliverChildListDelegate(
-                          [
-                            const Center(child: ImageSlider()), // Image Slider
-                            SizedBox(height: 2.h),
-                            _buildTabBar(context),
-                            SizedBox(height: 2.h),
-                            _buildTabContent(context), // Pass context here
-                            const Divider(
-                              height: 2,
-                              thickness: 2,
-                              color: Color.fromARGB(255, 245, 243, 243),
+                  body: RefreshIndicator(
+                    // إضافة RefreshIndicator هنا
+                    onRefresh: () async {
+                      // استدعاء الـ HomeBloc لإعادة تحميل المشاريع
+                      context.read<HomeBloc>().add(FetchProjects());
+                    },
+                    child: CustomScrollView(
+                      slivers: [
+                        SliverAppBar(
+                          backgroundColor: const Color(0xff352197),
+                          floating: true,
+                          pinned: false,
+                          actions: [
+                            const Text(
+                              'Home',
+                              textAlign: TextAlign.left,
+                              style: TextStyle(
+                                  fontSize: 24,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
                             ),
-                            const Botcamps(),
-                            const Divider(
-                              height: 2,
-                              thickness: 2,
-                              color: Color.fromARGB(255, 245, 243, 243),
+                            const SizedBox(
+                              width: 180,
                             ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 2.w),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: Text(
-                                  'Outstanding students ..',
-                                  style: TextStyle(
-                                    color: AppColors.blueLight,
-                                    fontSize: 18.sp,
-                                    fontWeight: FontWeight.bold,
+                            Image.asset(
+                              'assets/logo-h-white 2.png',
+                              height: 20.h,
+                              width: 28.w,
+                            ),
+                          ],
+                        ),
+                        SliverList(
+                          delegate: SliverChildListDelegate(
+                            [
+                              const Center(
+                                  child: ImageSlider()), // Image Slider
+                              SizedBox(height: 2.h),
+                              _buildTabBar(context),
+                              SizedBox(height: 2.h),
+                              _buildTabContent(context), // Pass context here
+                              const Divider(
+                                height: 2,
+                                thickness: 2,
+                                color: Color.fromARGB(255, 245, 243, 243),
+                              ),
+                              const Botcamps(),
+                              const Divider(
+                                height: 2,
+                                thickness: 2,
+                                color: Color.fromARGB(255, 245, 243, 243),
+                              ),
+                              Padding(
+                                padding: EdgeInsets.only(left: 2.w),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    'Outstanding students ..',
+                                    style: TextStyle(
+                                      color: AppColors.blueLight,
+                                      fontSize: 18.sp,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                            SizedBox(height: 10.h),
-                            const Out_Standing_Student(),
-                            SizedBox(height: 10.h),
-                          ],
+                              SizedBox(height: 10.h),
+                              const Out_Standing_Student(),
+                              SizedBox(height: 10.h),
+                            ],
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -153,7 +161,6 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _buildTabContent(BuildContext context) {
-    // Added context here
     return SizedBox(
       height: 75.h,
       child: TabBarView(
@@ -255,8 +262,6 @@ class HomeScreen extends StatelessWidget {
               return const Center(child: Text('No projects available.'));
             },
           ),
-          // const Center(child: Text('Recent Projects')),
-          // const Center(child: Text('Top Projects')),
         ],
       ),
     );
