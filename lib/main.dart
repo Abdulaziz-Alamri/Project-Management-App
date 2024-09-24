@@ -6,7 +6,7 @@ import 'package:sizer/sizer.dart';
 void main() async {
   await setup();
   runApp(const MainApp()
-
+  
       // DevicePreview(
       //   enabled: !kReleaseMode,
       //   builder: (context) => const MainApp(), // Wrap your app

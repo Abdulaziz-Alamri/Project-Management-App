@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 import 'package:project_management_app/data_layer/data_layer.dart';
@@ -42,9 +44,9 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
 
   @override
   void initState() {
-    super.initState();
     _checkEditAuthorization();
-    logger.i(_checkEditAuthorization());
+    super.initState();
+    // logger.i(_checkEditAuthorization());
   }
 
   final logger = Logger();
@@ -58,12 +60,20 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
     profile = await getProfile();
     if (!mounted) return; // تأكد من أن الويدجت ما زالت موجودة
 
-    logger.i('User Role: ${profile!.role}'); // طباعة الـ role
+    // logger.i('User Role: ${profile!.role}'); // طباعة الـ role
 
     setState(() {
       isEditAuthrized = profile!.role.toLowerCase() == 'admin' ||
           profile!.role.toLowerCase() == 'supervisor';
-      logger.i('isEditAuthrized: $isEditAuthrized');
+      // logger.i('isEditAuthrized: $isEditAuthrized');
+
+      log('${widget.project.toJson()}');
+
+      for (var member in widget.project.membersProject!) {
+        if (member.userId == profile!.id) {
+          isEditAuthrized = true;
+        }
+      }
     });
   }
 
