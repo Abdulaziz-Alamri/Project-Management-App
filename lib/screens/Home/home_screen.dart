@@ -162,7 +162,7 @@ class HomeScreen extends StatelessWidget {
 
   Widget _buildTabContent(BuildContext context) {
     return SizedBox(
-      height: 75.h,
+      height: 85.h,
       child: TabBarView(
         children: [
           Column(
