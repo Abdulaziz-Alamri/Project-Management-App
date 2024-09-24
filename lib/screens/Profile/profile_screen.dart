@@ -8,16 +8,17 @@ import 'package:project_management_app/screens/Auth/first_screen.dart';
 import 'package:project_management_app/screens/Edit_Profile/edit_profile_screen.dart';
 import 'package:project_management_app/screens/Home/projects_contaner.dart';
 import 'package:project_management_app/screens/Profile/custom_profile_links.dart';
+import 'package:project_management_app/screens/Profile/custom_project_tile.dart';
 import 'package:project_management_app/screens/Supervisor/add_project_screen.dart';
 import 'package:project_management_app/services/setup.dart';
-import 'package:project_management_app/screens/Profile/bloc/profole_bloc.dart'; // تأكد من استيراد الـ bloc
+import 'package:project_management_app/screens/Profile/bloc/profole_bloc.dart';
 
 class ProfileScreen extends StatelessWidget {
   const ProfileScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final String token = locator.get<DataLayer>().auth!.token; // جلب الـ token
+    final String token = locator.get<DataLayer>().auth!.token;
 
     return BlocProvider(
       create: (context) => ProfileBloc(api: ApiNetworking(), token: token)
@@ -42,7 +43,6 @@ class ProfileScreen extends StatelessWidget {
                     MaterialPageRoute(
                         builder: (context) => const FirstScreen()),
                     (route) => false);
-                logout(context);
               },
             ),
           ],
@@ -267,56 +267,57 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 10),
                         ...List.generate(profile.projects.length, (index) {
-                         
-                          return ListTile(
-                              trailing: profile.role == 'supervisor'
-                                  ? IconButton(
-                                      onPressed: () {
-                                        showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return AlertDialog(
-                                                content: const Text(
-                                                    'Are you sure you want to delete this project?'),
-                                                actions: [
-                                                  TextButton(
-                                                      onPressed: () async {
-                                                        await ApiNetworking()
-                                                            .deleteProject(
-                                                                token: token,
-                                                                projectId: profile
-                                                                    .projects[
-                                                                        index]
-                                                                    .projectId!);
-                                                        ScaffoldMessenger.of(
-                                                                context)
-                                                            .showSnackBar(
-                                                                const SnackBar(
-                                                                    content: Text(
-                                                                        'Project Deleted Successfully')));
-                                                        Navigator.pop(
-                                                            context);
-                                                      },
-                                                      child:
-                                                          const Text('YES')),
-                                                  TextButton(
-                                                      onPressed: () {
-                                                        Navigator.pop(
-                                                            context);
-                                                      },
-                                                      child: const Text('No'))
-                                                ],
-                                              );
-                                            });
-                                      },
-                                      icon: const Icon(
-                                        Icons.delete,
-                                        color: Colors.red,
-                                      ),
-                                    )
-                                  : null,
-                              title:
-                                  Projects(project: profile.projects[index]));
+                          return CustomProjectTile(
+                              project: profile.projects[index],
+                              profile: profile,
+                              token: token,
+                              index: index);
+                          // return ListTile(
+                          //     trailing: profile.role == 'supervisor'
+                          //         ? IconButton(
+                          //             onPressed: () {
+                          //               showDialog(
+                          //                   context: context,
+                          //                   builder: (context) {
+                          //                     return AlertDialog(
+                          //                       content: const Text(
+                          //                           'Are you sure you want to delete this project?'),
+                          //                       actions: [
+                          //                         TextButton(
+                          //                             onPressed: () async {
+                          //                               await ApiNetworking()
+                          //                                   .deleteProject(
+                          //                                       token: token,
+                          //                                       projectId: profile
+                          //                                           .projects[
+                          //                                               index]
+                          //                                           .projectId!);
+                          //                               ScaffoldMessenger.of(
+                          //                                       context)
+                          //                                   .showSnackBar(
+                          //                                       const SnackBar(
+                          //                                           content: Text(
+                          //                                               'Project Deleted Successfully')));
+                          //                               Navigator.pop(context);
+                          //                             },
+                          //                             child: const Text('YES')),
+                          //                         TextButton(
+                          //                             onPressed: () {
+                          //                               Navigator.pop(context);
+                          //                             },
+                          //                             child: const Text('No'))
+                          //                       ],
+                          //                     );
+                          //                   });
+                          //             },
+                          //             icon: const Icon(
+                          //               Icons.delete,
+                          //               color: Colors.red,
+                          //             ),
+                          //           )
+                          //         : null,
+                          //     title:
+                          //         Projects(project: profile.projects[index]));
                         }),
                         const SizedBox(height: 30),
                       ],
@@ -330,9 +331,5 @@ class ProfileScreen extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  void logout(BuildContext context) {
-    // إضافة وظيفة تسجيل الخروج هنا
   }
 }

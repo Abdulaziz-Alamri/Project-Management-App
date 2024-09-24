@@ -66,9 +66,7 @@ class _ProjectDetailsScreenState extends State<ProjectDetailsScreen> {
       isEditAuthrized = profile!.role.toLowerCase() == 'admin' ||
           profile!.role.toLowerCase() == 'supervisor';
       // logger.i('isEditAuthrized: $isEditAuthrized');
-
-      log('${widget.project.toJson()}');
-
+      
       for (var member in widget.project.membersProject!) {
         if (member.userId == profile!.id) {
           isEditAuthrized = true;
