@@ -24,7 +24,7 @@ class Projects extends StatelessWidget {
           Flexible(
             flex: 3,
             child: Container(
-              height: 17.h,
+              height: 14.h,
               width: 12.h,
               decoration: BoxDecoration(
                 color: AppColors.blueDark,
@@ -72,7 +72,7 @@ class Projects extends StatelessWidget {
           Flexible(
             flex: 7,
             child: Container(
-              height: 17.h,
+              height: 14.h,
               alignment: Alignment.center,
               decoration: BoxDecoration(
                 color: Colors.white,

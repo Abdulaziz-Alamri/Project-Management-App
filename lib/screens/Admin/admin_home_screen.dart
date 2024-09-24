@@ -154,7 +154,7 @@ class AdminHomeScreen extends StatelessWidget {
                       Center(
                         child: SizedBox(
                           height: 30,
-                          width: 170,
+                          width: 200,
                           child: ElevatedButton(
                             onPressed: () {
                               ApiNetworking().changeRole(

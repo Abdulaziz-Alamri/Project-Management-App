@@ -77,7 +77,7 @@ class Botcamps extends StatelessWidget {
     required String imageUrl,
   }) {
     return Container(
-      height: 20.h, 
+      height: 15.h,
       margin: const EdgeInsets.all(8),
       decoration: BoxDecoration(
         color: AppColors.white,
@@ -91,7 +91,6 @@ class Botcamps extends StatelessWidget {
           ),
         ],
       ),
-
       child: Row(
         children: [
           // الصورة الدائرية
